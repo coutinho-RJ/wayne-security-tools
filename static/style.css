@@ -1,0 +1,987 @@
+/* ============================
+   TEMA BATMAN – INDÚSTRIAS WAYNE
+   ============================ */
+
+:root {
+    --bg-body: #05060a;
+    --bg-elevated: #0b0f18;
+    --bg-elevated-soft: #111827;
+    --bg-topbar: #050814;
+    --border-subtle: #1f2933;
+    --text-primary: #e5e7eb;
+    --text-muted: #9ca3af;
+    --accent: #facc15;       /* amarelo Batman */
+    --accent-soft: rgba(250, 204, 21, 0.1);
+    --danger: #f87171;
+    --success: #4ade80;
+    --warning: #facc15;
+    --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.7);
+    --radius-lg: 18px;
+    --radius-pill: 999px;
+    --transition-fast: 0.18s ease-out;
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+}
+
+/* ============================
+   BASE
+   ============================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background: radial-gradient(circle at top, #111827 0, #05060a 55%, #000 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ============================
+   TOPO E NAVEGAÇÃO
+   ============================ */
+
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+    background: linear-gradient(to right, var(--bg-topbar), #020617 60%);
+    border-bottom: 1px solid #111827;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-bat {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: radial-gradient(circle at 30% 20%, #facc15 0, #facc15 40%, #f97316 100%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.7);
+}
+
+.logo-bat::before,
+.logo-bat::after {
+    content: "";
+    position: absolute;
+    inset: 6px 8px;
+    border-radius: 999px;
+    border: 2px solid #020617;
+}
+
+/* “orelhas” do morcego */
+.logo-bat::before {
+    top: -4px;
+    left: 8px;
+    right: 8px;
+    height: 15px;
+    border-radius: 10px 10px 20px 20px;
+    border-width: 2px 2px 0 2px;
+    border-color: #020617;
+}
+
+.topbar-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.topbar-title span:first-child {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.topbar-title span:last-child {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Navegação */
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 14px;
+}
+
+.nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    position: relative;
+    padding: 4px 0;
+    transition: color var(--transition-fast);
+}
+
+.nav a:hover {
+    color: var(--accent);
+}
+
+.nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), #f97316);
+    border-radius: var(--radius-pill);
+    transition: width var(--transition-fast);
+}
+
+.nav a:hover::after,
+.nav a.nav-active::after {
+    width: 100%;
+}
+
+.nav .user-info {
+    margin-left: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.nav .logout {
+    color: #f97373;
+}
+
+/* Badge de pendências */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    padding: 2px 6px;
+    margin-left: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* ============================
+   LAYOUT PRINCIPAL
+   ============================ */
+
+.main-wrapper {
+    padding: 24px 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.container {
+    max-width: 100%;
+}
+
+/* ============================
+   CARDS E PAINÉIS
+   ============================ */
+
+.card {
+    background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.08), transparent 55%);
+    background-color: var(--bg-elevated);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-subtle);
+}
+
+/*.card + .card {
+    margin-top: 16px;
+}*/
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+    align-items: stretch;       /* 🔥 força todos a terem mesma altura */
+}
+
+
+.kpi-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 190px;              /* 🔥 todos os 3 cards terão essa altura exata */
+}
+
+
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    inset: auto -40px -90px auto;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(250, 204, 21, 0.12), transparent 70%);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.kpi-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.kpi-caption {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Dashboard – seções */
+
+.dashboard-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 18px;
+}
+
+.dashboard-header h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.dashboard-header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* Lista de status de recursos */
+
+.status-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(148, 163, 184, 0.25);
+}
+
+.status-item:last-child {
+    border-bottom: none;
+}
+
+.chip-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 2px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(148, 163, 184, 0.15);
+    font-size: 11px;
+}
+
+.chip-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--accent);
+}
+
+/* Timeline de atividades */
+
+.timeline {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 12px;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.25);
+}
+
+.timeline-item::after {
+    content: "";
+    position: absolute;
+    left: 9px;
+    top: 14px;
+    width: 2px;
+    bottom: -10px;
+    background: linear-gradient(to bottom, rgba(148, 163, 184, 0.5), transparent);
+}
+
+.timeline-item:last-child::after {
+    display: none;
+}
+
+.timeline-main {
+    font-size: 13px;
+}
+
+.timeline-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ============================
+   TABELAS
+   ============================ */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table thead {
+    background: linear-gradient(to right, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7));
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(30, 64, 175, 0.2);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.table tbody tr:nth-child(even) {
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.table tbody tr:hover {
+    background: rgba(55, 65, 81, 0.6);
+}
+
+/* Mini thumb para imagens de recurso (futuro) */
+.resource-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+/* ============================
+   FORMULÁRIOS E BOTÕES
+   ============================ */
+
+.form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 480px;
+}
+
+.form-card label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.form-card input,
+.form-card select,
+.form-card textarea {
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid #1f2937;
+    background: rgba(15, 23, 42, 0.7);
+    color: var(--text-primary);
+    font-size: 13px;
+}
+
+.form-card textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-card input:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.5);
+}
+
+/* Botões */
+
+button,
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    color: #000;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+}
+
+button:hover,
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+    filter: brightness(1.05);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* Links de ação menores nas tabelas */
+.table a,
+.table button {
+    font-size: 12px;
+}
+
+/* Alertas (flash messages) */
+
+.alert {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.alert-success {
+    background: rgba(74, 222, 128, 0.08);
+    color: var(--success);
+    border: 1px solid rgba(74, 222, 128, 0.4);
+}
+
+.alert-danger {
+    background: rgba(248, 113, 113, 0.08);
+    color: var(--danger);
+    border: 1px solid rgba(248, 113, 113, 0.5);
+}
+
+.alert-warning {
+    background: rgba(250, 204, 21, 0.08);
+    color: var(--warning);
+    border: 1px solid rgba(250, 204, 21, 0.6);
+}
+
+/* ============================
+   LOGIN / AUTENTICAÇÃO
+   ============================ */
+
+.auth-wrapper {
+    min-height: calc(100vh - 70px); /* ajusta para considerar o topo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.auth-card {
+    max-width: 460px;
+    width: 100%;
+    background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.08), transparent 60%);
+    background-color: rgba(15, 23, 42, 0.96);
+    border-radius: var(--radius-lg);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(31, 41, 55, 0.95);
+}
+
+.auth-card h1 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 22px;
+}
+
+.auth-card p {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* ============================
+   RESPONSIVIDADE
+   ============================ */
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .nav {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .main-wrapper {
+        padding: 18px 14px 28px;
+    }
+}
+
+/* ============================
+   BACKGROUND EXCLUSIVO PARA LOGIN
+   ============================ */
+
+body.login-page {
+   /* focar mais à direita (se Bruce estiver lá) */
+    background: url("/static/img/wayne.png") no-repeat right center fixed;
+
+    background-size: cover;          /* imagem ocupando toda a tela */
+}
+
+/* sem blur na faixa central */
+.auth-wrapper {
+    background: none;
+}
+
+/* card bem destacado, mas sem borrar o fundo */
+.auth-card {
+    background: rgba(0, 0, 0, 0.78);
+    border: 1px solid rgba(250, 204, 21, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+}
+
+@media (max-width: 900px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* TITULOS PRINCIPAIS */
+.page-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #f5c518; /* amarelo Batman */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+
+    /* Efeito sutil de brilho */
+    text-shadow: 0 0 8px rgba(245, 197, 24, 0.6);
+}
+/* TITULOS DE CARD / SEÇÕES */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #e2e2e2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    border-left: 4px solid #f5c518;
+    padding-left: 12px;
+    margin-bottom: 20px;
+
+    opacity: 0.95;
+}
+
+/* SUBTITULOS / DESCRIÇÕES */
+.section-subtitle {
+    font-size: 14px;
+    color: #9ba5b4;
+    margin-top: -10px;
+    margin-bottom: 15px;
+}
+
+.card-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f5c518;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(245, 197, 24, 0.3);
+    margin-bottom: 15px;
+}
+
+/* TÍTULOS DOS CARDS KPI (linha de cima) */
+.kpi-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #e6e6e6;
+    margin-bottom: 14px;
+    position: relative;
+    padding-bottom: 6px;
+}
+
+/* Barrinha amarela embaixo do título do card */
+.kpi-label::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 42px;
+    height: 2px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #f5c518, #ff9100);
+    box-shadow: 0 0 6px rgba(245, 197, 24, 0.6);
+}
+
+.toolbar-card {
+    margin-bottom: 20px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* CABEÇALHO DA TABELA DE RECURSOS */
+.table thead {
+    background: radial-gradient(circle at top left, #1f2937 0, #0b0f19 55%);
+}
+
+/* Cabeçalho dourado estilo Wayne Enterprises */
+.table thead th {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 14px 16px;
+
+    /* cor igual ao título */
+    color: #f4c542;  
+    text-shadow: 0 0 6px rgba(255, 193, 7, 0.5);
+
+    border-bottom: 1px solid rgba(255, 193, 7, 0.25);
+    background: rgba(20, 20, 30, 0.45);
+}
+
+
+.table tbody td {
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.table tbody tr:nth-child(even) {
+    background: rgba(11, 15, 25, 0.95);
+}
+
+.table tbody tr:nth-child(odd) {
+    background: rgba(6, 10, 20, 0.95);
+}
+
+.table tbody tr:hover {
+    background: rgba(18, 24, 38, 0.98);
+}
+
+/* BASE BUTTON */
+.btn {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s ease;
+}
+
+/* VERSÃO PEQUENA PARA TABELA */
+.btn-xs {
+    padding: 4px 14px;
+    font-size: 13px;
+}
+
+/* Editar – botão escuro discreto */
+.btn-secondary {
+    background: #1a1f2b;
+    color: #e5e7eb;
+    border: 1px solid #303647;
+}
+.btn-secondary:hover {
+    background: #232a3b;
+    border-color: #3f4a63;
+}
+
+/* Entrada – amarelo Batman */
+.btn-primary {
+    background: linear-gradient(90deg, #f5c518, #ff9800);
+    color: #111827;
+    box-shadow: 0 0 10px rgba(245, 197, 24, 0.55);
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #ffd54f, #ffb300);
+    box-shadow: 0 0 14px rgba(255, 213, 79, 0.75);
+}
+
+/* Solicitar baixa – laranja alerta */
+.btn-warning {
+    background: linear-gradient(90deg, #ff8a00, #ff5500);
+    color: #111827;
+    box-shadow: 0 0 10px rgba(255, 138, 0, 0.55);
+}
+.btn-warning:hover {
+    background: linear-gradient(90deg, #ffb347, #ff7a1a);
+    box-shadow: 0 0 14px rgba(255, 179, 71, 0.75);
+}
+
+/* Remover – vermelho forte */
+.btn-danger {
+    background: #b91c1c;
+    color: #f9fafb;
+}
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Ações na tabela alinhadas e com espaçamento */
+.table-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.th-acoes {
+    text-align: left;
+}
+
+.btn-secondary {
+    background: #2d3748;
+    color: #e5e7eb;
+    border: 1px solid #475569;
+    padding: 6px 16px;
+}
+.btn-secondary:hover {
+    background: #4a5568;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #ffcc00, #ff9900);
+    color: #111;
+    box-shadow: 0 0 10px rgba(255, 180, 0, 0.7);
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #ffd94d, #ffae00);
+    box-shadow: 0 0 14px rgba(255, 200, 0, 0.9);
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, #ff6a00, #ff3000);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 80, 0, 0.7);
+}
+.btn-warning:hover {
+    background: linear-gradient(90deg, #ff8a3d, #ff4f1a);
+    box-shadow: 0 0 14px rgba(255, 120, 30, 0.9);
+}
+
+.btn-danger {
+    background: #e11d48;
+    color: white;
+}
+.btn-danger:hover {
+    background: #be123c;
+}
+
+.btn-xs {
+    padding: 4px 12px;
+    font-size: 13px;
+    border-radius: 10px;
+}
+
+/* =========================================
+   BAIXAS – STATUS E ALINHAMENTO NUMÉRICO
+   ========================================= */
+
+/* Números à direita na tabela de baixas */
+.table-baixas .th-num,
+.table-baixas .td-num {
+    text-align: right;
+}
+
+/* Badge de status */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Status aprovado (verde) */
+.status-ok {
+    background: rgba(34, 197, 94, 0.12);   /* fundo verde suave */
+    color: #4ade80;                       /* texto verde claro */
+    border: 1px solid rgba(34, 197, 94, 0.55);
+}
+
+/* Status pendente (amarelo) */
+.status-pending {
+    background: rgba(250, 204, 21, 0.12);
+    color: #facc15;
+    border: 1px solid rgba(250, 204, 21, 0.55);
+}
+
+/* Status cancelado / reprovado (vermelho) */
+.status-cancel {
+    background: rgba(248, 113, 113, 0.12);
+    color: #fb7185;
+    border: 1px solid rgba(248, 113, 113, 0.55);
+}
+
+/* Ações "apagadas" quando não há nada a fazer */
+.table-actions-muted {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+/* ----- LOGIN ESPECIAL WAYNE ----- */
+
+.login-card h1.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f3c623; /* dourado */
+    text-shadow: 0 0 10px rgba(243,198,35,0.35);
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.login-card .section-subtitle {
+    font-size: 14px;
+    color: #c5c5c5;
+}
+
+.input-label {
+    color: #f3c623;
+    font-size: 14px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(250, 220, 120, 0.25);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    transition: 0.2s ease;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #f3c623;
+    box-shadow: 0 0 12px rgba(243,198,35,0.35);
+}
+
+/* Botão dourado */
+.login-btn {
+    background: linear-gradient(90deg,#f3c623,#e8b10c);
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    transition: 0.3s ease;
+}
+
+.login-btn:hover {
+    background: linear-gradient(90deg,#ffd84f,#f3c623);
+    box-shadow: 0 0 14px rgba(243,198,35,0.55);
+    transform: translateY(-1px);
+}
+
+/* Unsplash loading */
+.unsplash-loading {
+    margin: 10px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    width: fit-content;
+    background: linear-gradient(90deg, rgba(250, 204, 21, 0.12), rgba(17, 24, 39, 0.8));
+    border: 1px solid rgba(250, 204, 21, 0.28);
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35), 0 6px 14px rgba(0,0,0,0.35);
+}
+.unsplash-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(250, 204, 21, 0.25);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: unsplash-spin 0.9s linear infinite;
+}
+@keyframes unsplash-spin {
+    to { transform: rotate(360deg); }
+}
+

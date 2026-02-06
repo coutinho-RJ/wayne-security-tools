@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Solicitações de Baixa | Indústrias Wayne{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header">
+    <h1 class="page-title">Solicitações de Baixa</h1>
+    <p class="section-subtitle">
+        Gerenciamento das solicitações de baixa de recursos das Indústrias Wayne.
+    </p>
+</div>
+
+<table class="table table-baixas">
+    <thead>
+        <tr>
+            <th class="th-num">ID</th>
+            <th>Recurso</th>
+            <th>Solicitante</th>
+            <th class="th-num">Quantidade</th>
+            <th class="th-num">Valor total (R$)</th>
+            <th>Status</th>
+            <th>Criado em</th>
+            <th class="th-acoes">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td class="td-num">{{ r.id }}</td>
+            <td>{{ r.resource_name }}</td>
+            <td>{{ r.requester_name }}</td>
+            <td class="td-num">{{ r.quantity }}</td>
+            <td class="td-num">
+                {{ r.total_value|brl }}
+            </td>
+
+            <td>
+                {# Badge de status com cores #}
+                <span class="status-pill
+                    {% if r.status in ['aprovado', 'aprovado_gerente', 'aprovado_admin'] %}
+                        status-ok
+                    {% elif r.status in ['pendente', 'aguardando_gerente', 'aguardando_admin'] %}
+                        status-pending
+                    {% else %}
+                        status-cancel
+                    {% endif %}
+                ">
+                    {{ r.status.replace('_', ' ') }}
+                </span>
+            </td>
+            <td>{{ r.created_at }}</td>
+            <td class="table-actions">
+                {# Aqui você mantém os botões que já tinha, só ajustando as classes #}
+                {% if session.get('user_role') in ['gerente', 'admin'] and r.status in ['pendente','aguardando_gerente','aguardando_admin'] %}
+                    <form action="{{ url_for('baixa_gerente_aprovar', request_id=r.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-xs btn-primary">
+                            Aprovar
+                        </button>
+                    </form>
+
+                    <form action="{{ url_for('baixa_reprovar', request_id=r.id) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-xs btn-danger">
+                            Reprovar
+                        </button>
+                    </form>
+                {% else %}
+                    <span class="table-actions-muted">—</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" style="text-align:center; padding:18px;">
+                Nenhuma solicitação de baixa registrada.
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

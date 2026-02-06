@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if usuario %}
+        Editar Usuário | Indústrias Wayne
+    {% else %}
+        Novo Usuário | Indústrias Wayne
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">
+    {% if usuario %}
+        Editar Usuário
+    {% else %}
+        Novo Usuário
+    {% endif %}
+</h1>
+
+<p class="section-subtitle">
+    Definição de credenciais e permissões de acesso ao sistema de segurança das Indústrias Wayne.
+</p>
+
+<div class="card">
+    <form method="POST" class="form-card">
+
+        <!-- NOME -->
+        <div>
+            <label for="name">Nome completo</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                value="{{ usuario.name if usuario }}"
+                placeholder="Ex.: Bruce Wayne"
+            >
+        </div>
+
+        <!-- USUÁRIO -->
+        <div>
+            <label for="username">Usuário (login)</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                value="{{ usuario.username if usuario }}"
+                placeholder="Ex.: bruce"
+            >
+        </div>
+
+        <!-- SENHA -->
+        <div>
+            <label for="password">
+                Senha
+                {% if usuario %}
+                    <small style="color:#9ca3af;">(deixe em branco para manter a atual)</small>
+                {% endif %}
+            </label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                {% if not usuario %}required{% endif %}
+                placeholder="{% if usuario %}Nova senha (opcional){% else %}Defina uma senha segura{% endif %}"
+            >
+        </div>
+
+        <!-- PAPEL / ROLE -->
+        <div>
+            <label for="role_id">Papel no sistema</label>
+            <select id="role_id" name="role_id" required>
+                <option value="">Selecione um papel...</option>
+                {% for r in roles %}
+                    <option value="{{ r.id }}"
+                        {% if usuario and usuario.role_id == r.id %}selected{% endif %}>
+                        {{ r.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <small style="color:#9ca3af; font-size:12px;">
+                • <strong>funcionario</strong>: não gerencia usuários. <br>
+                • <strong>gerente</strong>: gerencia recursos e solicitações de baixa. <br>
+                • <strong>admin</strong>: controle total do sistema.
+            </small>
+        </div>
+
+        <!-- AÇÕES -->
+        <div style="display:flex; gap:10px; margin-top:10px;">
+            <button type="submit" class="btn btn-primary">
+                {% if usuario %}Salvar alterações{% else %}Cadastrar usuário{% endif %}
+            </button>
+
+            <a href="{{ url_for('usuarios_list') }}" class="btn btn-secondary">
+                Cancelar
+            </a>
+        </div>
+
+        {% if usuario %}
+            <div style="margin-top:12px; font-size:12px; color:#9ca3af;">
+                Status atual:
+                {% if usuario.approved == 1 %}
+                    <span class="status-chip status-ok">Aprovado</span>
+                {% else %}
+                    <span class="status-chip status-pending">Pendente de aprovação</span>
+                {% endif %}
+            </div>
+        {% endif %}
+
+    </form>
+</div>
+
+{% endblock %}

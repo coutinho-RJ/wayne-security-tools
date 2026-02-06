@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if recurso %}
+        Editar Recurso | Indústrias Wayne
+    {% else %}
+        Novo Recurso | Indústrias Wayne
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">
+    {% if recurso %}
+        Editar Recurso
+    {% else %}
+        Novo Recurso
+    {% endif %}
+</h1>
+
+<p class="section-subtitle">
+    Cadastro e gerenciamento de equipamentos, dispositivos e outros recursos das Indústrias Wayne.
+</p>
+
+<div class="card">
+
+    <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap;">
+
+        <!-- COLUNA DO FORMULÁRIO -->
+        <form method="POST" class="form-card" style="flex:2; min-width:260px;">
+
+            <!-- Nome -->
+            <div>
+                <label for="name">Nome do Recurso</label>
+                <input type="text"
+                       id="name"
+                       name="name"
+                       required
+                       value="{{ recurso.name if recurso else '' }}"
+                       placeholder="Ex.: Câmera 4K, Veículo Tático, Sensor de Movimento">
+            </div>
+
+            <!-- Descrição -->
+            <div>
+                <label for="description">Descrição</label>
+                <textarea id="description"
+                          name="description"
+                          placeholder="Detalhes técnicos, uso previsto, especificações...">{{ recurso.description if recurso else '' }}</textarea>
+            </div>
+
+            <!-- Tipo -->
+            <div>
+                <label for="type_id">Tipo do Recurso</label>
+                <select id="type_id" name="type_id" required>
+                    <option value="">Selecione...</option>
+                    {% for t in tipos %}
+                        <option value="{{ t.id }}"
+                            {% if recurso and recurso.type_id == t.id %}selected{% endif %}>
+                            {{ t.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Localização -->
+            <div>
+                <label for="location">Localização</label>
+                <input type="text"
+                       id="location"
+                       name="location"
+                       required
+                       value="{{ recurso.location if recurso else '' }}"
+                       placeholder="Ex.: Gotham Centro, Ala Oeste, Depósito 3">
+            </div>
+
+            <!-- Status -->
+            <div>
+                <label for="status">Status</label>
+                <select id="status" name="status" required>
+                    <option value="ativo"      {% if recurso and recurso.status == "ativo" %}selected{% endif %}>Ativo</option>
+                    <option value="inativo"    {% if recurso and recurso.status == "inativo" %}selected{% endif %}>Inativo</option>
+                    <option value="manutencao" {% if recurso and recurso.status == "manutencao" %}selected{% endif %}>Manutenção</option>
+                </select>
+            </div>
+
+            <!-- Preço -->
+            <div>
+                <label for="price">Preço (R$)</label>
+                <input type="number"
+                       id="price"
+                       name="price"
+                       min="0"
+                       step="0.01"
+                       required
+                       value="{{ recurso.price if recurso else 0 }}">
+            </div>
+
+            <!-- Quantidade -->
+            <div>
+                <label for="quantity">Quantidade</label>
+                <input type="number"
+                       id="quantity"
+                       name="quantity"
+                       min="0"
+                       required
+                       value="{{ recurso.quantity if recurso else 0 }}">
+            </div>
+
+            <!-- URL da imagem -->
+            <div>
+                <label for="image_url">URL da imagem (opcional)</label>
+                <input type="text"
+                       id="image_url"
+                       name="image_url"
+                       value="{{ recurso.image_url if recurso else '' }}"
+                       placeholder="https://exemplo.com/imagem-do-recurso.jpg">
+                <small style="color:#aaa">
+                    Foto por <a id="unsplash-author" href="#" target="_blank" rel="noopener">Autor</a> no
+                    <a id="unsplash-link" href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
+                </small>
+            </div>
+
+            <!-- Botões -->
+            <div style="display:flex; gap:12px; margin-top:10px;">
+                <button type="submit" class="btn btn-primary">
+                    {% if recurso %}
+                        Salvar Alterações
+                    {% else %}
+                        Cadastrar Recurso
+                    {% endif %}
+                </button>
+
+                <a href="{{ url_for('recursos_list') }}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+
+        <!-- COLUNA DA PRÉ-VISUALIZAÇÃO -->
+        <div style="flex:1; min-width:220px;">
+            <h2 class="section-title">Pré-visualização</h2>
+            <div class="card" style="padding:12px; text-align:center;">
+                <img id="preview-img"
+                     src="{{ recurso.image_url if recurso and recurso.image_url else '' }}"
+                     alt="Pré-visualização do recurso"
+                     style="max-width:100%; max-height:260px; border-radius:12px; display: {{ 'block' if recurso and recurso.image_url else 'none' }}; object-fit:cover;">
+
+                <p class="section-subtitle" id="preview-caption" style="margin-top:8px;">
+                    {% if recurso and recurso.image_url %}
+                        Imagem atual associada ao recurso.
+                    {% else %}
+                        Cole uma URL de imagem ou, no próximo passo, vamos sugerir automaticamente pela descrição.
+                    {% endif %}
+                </p>
+                <div id="unsplash-loading" class="unsplash-loading" style="display:none;" aria-live="polite">
+                    <span class="unsplash-spinner" aria-hidden="true"></span>
+                    Buscando imagem...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Script simples para atualizar o preview quando o campo de URL mudar -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const inputName   = document.getElementById("name");
+    const inputUrl    = document.getElementById("image_url");
+    const img         = document.getElementById("preview-img");
+    const caption     = document.getElementById("preview-caption");
+    const authorLink  = document.getElementById("unsplash-author");
+    const unsplashLink = document.getElementById("unsplash-link");
+    const loading     = document.getElementById("unsplash-loading");
+    const form        = document.querySelector("form.form-card");
+
+    if (!inputUrl || !img) return;
+
+    let userChangedImage = !!(inputUrl && inputUrl.value.trim());
+// se já vier uma URL do banco, NÃO sugerimos por cima
+    let unsplashTimeout = null;     // para esperar ele terminar de digitar
+    let lastDownloadLocation = null;
+    let lastImageUrl = null;
+
+    // --- Preview baseado na URL digitada ---
+    inputUrl.addEventListener("input", function () {
+        userChangedImage = true; // ele mexeu manualmente
+        const url = inputUrl.value.trim();
+        lastDownloadLocation = null;
+        lastImageUrl = null;
+
+        if (url) {
+            img.src = url;
+            img.style.display = "block";
+            caption.textContent = "Pré-visualização baseada na URL informada.";
+        } else {
+            img.style.display = "none";
+            caption.textContent = "Cole uma URL de imagem ou aguarde a sugestão automática por nome.";
+        }
+    });
+
+    // --- Sugest?o autom?tica a partir do nome + descri??o ---
+    const inputDesc = document.getElementById("description");
+
+    function buildQuery() {
+        const parts = [];
+        const nameVal = inputName ? inputName.value.trim() : "";
+        const descVal = inputDesc ? inputDesc.value.trim() : "";
+        if (nameVal) parts.push(nameVal);
+        if (descVal) parts.push(descVal);
+        return parts.join(" ");
+    }
+
+    function scheduleSuggest() {
+        const q = buildQuery();
+
+        // se usu?rio j? mexeu manualmente na URL, n?o sugerimos mais
+        if (!q || userChangedImage) {
+            if (loading) loading.style.display = "none";
+            return;
+        }
+
+        // debounce: espera um pouquinho depois de digitar
+        if (unsplashTimeout) {
+            clearTimeout(unsplashTimeout);
+        }
+
+        unsplashTimeout = setTimeout(function () {
+            if (loading) loading.style.display = "flex";
+            fetch(`/api/unsplash_suggest?q=${encodeURIComponent(q)}`)
+                .then(resp => resp.json())
+                .then(data => {
+                    if (!data || !data.ok) {
+                        const msg = (data && data.error) ? data.error : "Erro ao buscar imagem.";
+                        caption.textContent = msg;
+                        if (loading) loading.style.display = "none";
+                        return;
+                    }
+
+                    if (!data.image_url) {
+                        caption.textContent = "Nenhuma imagem encontrada para esse termo.";
+                        if (loading) loading.style.display = "none";
+                        return;
+                    }
+
+                    // aplica sugest?o
+                    img.src = data.image_url;
+                    img.style.display = "block";
+                    inputUrl.value = data.image_url;
+                    caption.textContent = "Sugest?o autom?tica de imagem para este recurso (Unsplash).";
+
+                    if (authorLink) {
+                        if (data.author_name) authorLink.textContent = data.author_name;
+                        if (data.author_url) authorLink.href = data.author_url;
+                    }
+                    if (unsplashLink && data.unsplash_url) {
+                        unsplashLink.href = data.unsplash_url;
+                    }
+                    lastDownloadLocation = data.download_location || null;
+                    lastImageUrl = data.image_url;
+                    if (loading) loading.style.display = "none";
+                })
+                .catch(err => {
+                    console.error("Erro ao buscar sugest?o de imagem:", err);
+                    if (loading) loading.style.display = "none";
+                });
+        }, 700); // 700ms depois da ?ltima tecla
+    }
+
+    if (inputName) {
+        inputName.addEventListener("input", scheduleSuggest);
+    }
+    if (inputDesc) {
+        inputDesc.addEventListener("input", scheduleSuggest);
+    }
+
+    if (form) {
+        form.addEventListener("submit", function () {
+            if (!lastDownloadLocation || !inputUrl) return;
+            if (inputUrl.value.trim() !== lastImageUrl) return;
+
+            const payload = JSON.stringify({ download_location: lastDownloadLocation });
+
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: "application/json" });
+                navigator.sendBeacon("/api/unsplash_download", blob);
+            } else {
+                fetch("/api/unsplash_download", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: payload,
+                    keepalive: true
+                }).catch(() => {});
+            }
+        });
+    }
+});
+</script>
+
+{% endblock %}

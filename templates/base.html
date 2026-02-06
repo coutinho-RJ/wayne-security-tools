@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Indústrias Wayne{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% if request.endpoint == 'login' %}login-page{% endif %}">
+
+
+<header class="topbar">
+    <div class="topbar-left">
+        <div class="logo-bat"></div>
+        <div class="topbar-title">
+            <span>INDÚSTRIAS WAYNE</span>
+            <span>Sistema de Segurança de Gotham</span>
+        </div>
+    </div>
+
+    <nav class="nav">
+    {% if session.get('user_id') %}
+        <a href="{{ url_for('dashboard') }}"
+           class="{% if request.endpoint == 'dashboard' %}nav-active{% endif %}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('recursos_list') }}"
+           class="{% if request.endpoint in ['recursos_list', 'recurso_novo', 'recurso_editar'] %}nav-active{% endif %}">
+            Recursos
+        </a>
+
+        {% if session.get('user_role') in ['gerente', 'admin'] %}
+            <a href="{{ url_for('baixas_list') }}"
+               class="{% if request.endpoint == 'baixas_list' %}nav-active{% endif %}">
+                Baixas
+                {% if pendentes_baixas and pendentes_baixas > 0 %}
+                    <span class="badge">{{ pendentes_baixas }}</span>
+                {% endif %}
+            </a>
+
+            <a href="{{ url_for('usuarios_list') }}"
+               class="{% if request.endpoint in ['usuarios_list', 'usuario_novo', 'usuario_editar'] %}nav-active{% endif %}">
+                Usuários
+            </a>
+        {% endif %}
+
+        <span class="user-info">
+            {{ session.get('user_name') }} ({{ session.get('user_role') }})
+        </span>
+
+        <a href="{{ url_for('logout') }}" class="logout">Sair</a>
+
+    {% else %}
+        <!-- Quando NÃO estiver logado, mostra só um link simples -->
+        <a href="{{ url_for('login') }}" class="nav-active">
+            Login
+        </a>
+    {% endif %}
+</nav>
+
+</header>
+
+<main class="main-wrapper">
+    <div class="container">
+        {# mensagens flash #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

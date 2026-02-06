@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Indústrias Wayne{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header">
+    <h1 class="page-title">Painel de Segurança</h1>
+    <p class="section-subtitle">
+        Monitoramento em tempo real dos recursos e atividades das
+        Indústrias Wayne em Gotham City.
+    </p>
+</div>
+
+<div class="cards-grid">
+
+    <!-- TOTAL DE RECURSOS -->
+    <div class="card kpi-card">
+        <div class="kpi-label">Recursos Cadastrados</div>
+        <div class="kpi-value">{{ total_recursos }}</div>
+        <p class="kpi-caption section-subtitle">
+            Equipamentos, veículos e dispositivos de segurança sob gestão.
+        </p>
+    </div>
+
+    <!-- DIVERSIDADE DE STATUS -->
+    <div class="card kpi-card">
+        <div class="kpi-label">Status de Operação</div>
+        <div class="kpi-value">{{ recursos_por_status|length }}</div>
+        <p class="kpi-caption section-subtitle">
+            Diferentes estados de operação dos recursos (ativo, manutenção, etc).
+        </p>
+    </div>
+
+    <!-- ATIVIDADES RECENTES -->
+    <div class="card kpi-card">
+        <div class="kpi-label">Atividades Recentes</div>
+        <div class="kpi-value">{{ ultimos_logs|length }}</div>
+        <p class="kpi-caption section-subtitle">
+            Últimas ações registradas na bat-rede de segurança.
+        </p>
+    </div>
+</div>
+
+<div class="cards-grid">
+
+    <!-- STATUS DOS RECURSOS -->
+    <div class="card">
+        <h2 class="section-title">Status dos Recursos</h2>
+        <p class="section-subtitle" style="margin-top: 4px;">
+            Visão rápida da distribuição de recursos por estado de operação.
+        </p>
+
+        <ul class="status-list" style="margin-top: 12px;">
+            {% for row in recursos_por_status %}
+                <li class="status-item">
+                    <span class="chip-status">
+                        <span class="chip-dot"></span>
+                        {{ row.status|capitalize }}
+                    </span>
+                    <span>{{ row.total }}</span>
+                </li>
+            {% else %}
+                <li class="status-item">
+                    <span>Nenhum recurso cadastrado ainda.</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- ÚLTIMAS ATIVIDADES -->
+    <div class="card">
+        <h2 class="section-title">Últimas Atividades</h2>
+        <p class="section-subtitle" style="margin-top: 4px;">
+            Log de ações registradas pelos usuários do sistema.
+        </p>
+
+        <ul class="timeline" style="margin-top: 12px;">
+            {% for log in ultimos_logs %}
+                <li class="timeline-item">
+                    <div class="timeline-main">
+                        <strong>{{ log.user_name }}</strong>
+                        — {{ log.action }}
+                    </div>
+
+                    {% if log.details %}
+                        <div class="timeline-main" style="font-size: 12px;">
+                            {{ log.details }}
+                        </div>
+                    {% endif %}
+
+                    <div class="timeline-meta">
+                        {{ log.created_at }}
+                    </div>
+                </li>
+            {% else %}
+                <li class="timeline-item">
+                    <div class="timeline-main">
+                        Nenhuma atividade registrada ainda.
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

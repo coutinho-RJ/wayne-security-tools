@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Usuários do Sistema{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">Usuários do Sistema</h1>
+<p class="section-subtitle">
+    Gerenciamento de contas, permissões e níveis de acesso das Indústrias Wayne.
+</p>
+
+<div class="toolbar-card">
+    {% if session.get('user_role') in ['admin', 'gerente'] %}
+        <a href="{{ url_for('usuario_novo') }}" class="btn btn-primary">
+            + Novo Usuário
+        </a>
+    {% endif %}
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Usuário</th>
+            <th>Papel</th>
+            <th>Status</th>
+            <th>Criado em</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u.name }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.role_name }}</td>
+
+            <!-- STATUS -->
+            <td>
+                {% if u.approved == 1 %}
+                    <span class="status-chip status-ok">Aprovado</span>
+                {% else %}
+                    <span class="status-chip status-pending">Pendente</span>
+                {% endif %}
+            </td>
+
+            <td>{{ u.created_at }}</td>
+
+            <td class="table-actions">
+
+                {# 🔒 Se o usuário logado NÃO for admin ou gerente → mostrar apenas um traço #}
+                {% if session.get('user_role') not in ['admin', 'gerente'] %}
+                    —
+                {% else %}
+
+                    {# Editar #}
+                    <a href="{{ url_for('usuario_editar', usuario_id=u.id) }}"
+                       class="btn btn-secondary btn-xs">
+                        Editar
+                    </a>
+
+                    {# Remover – somente admin #}
+                    {% if session.get('user_role') == 'admin' %}
+                        <form action="{{ url_for('usuario_remover', usuario_id=u.id) }}"
+                              method="POST"
+                              style="display:inline;">
+                            <button type="submit"
+                                    class="btn btn-danger btn-xs"
+                                    onclick="return confirm('Deseja remover este usuário?')">
+                                Remover
+                            </button>
+                        </form>
+                    {% endif %}
+
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

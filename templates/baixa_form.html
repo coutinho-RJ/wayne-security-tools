@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Solicitar Baixa - {{ recurso.name }}{% endblock %}
+
+{% block content %}
+<h1>Solicitar Baixa</h1>
+
+<div class="card">
+    <p><strong>Recurso:</strong> {{ recurso.name }}</p>
+    <p><strong>Preço unitário:</strong> R$ {{ recurso.price }}</p>
+    <p><strong>Estoque atual:</strong> {{ recurso.quantity }}</p>
+</div>
+
+<form method="POST" class="form-card">
+    <label>Quantidade para baixa</label>
+    <input type="number" min="1" max="{{ recurso.quantity }}" name="quantity" required>
+
+    <button type="submit">Enviar solicitação</button>
+</form>
+{% endblock %}

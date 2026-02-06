@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Recursos Internos | Indústrias Wayne{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-header">
+    <h1 class="page-title">Recursos Internos</h1>
+    <p class="section-subtitle">
+        Gerenciamento dos equipamentos, veículos e dispositivos de segurança
+        das Indústrias Wayne.
+    </p>
+</div>
+
+<div class="card toolbar-card">
+    {% if session.get('user_role') in ['gerente', 'admin'] %}
+        <a href="{{ url_for('recurso_novo') }}" class="btn btn-primary">
+            + Novo Recurso
+        </a>
+    {% endif %}
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Tipo</th>
+            <th>Localização</th>
+            <th>Status</th>
+            <th>Preço (R$)</th>
+            <th>Quantidade</th>
+            <th class="th-acoes">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in recursos %}
+        <tr>
+            <td>{{ r.name }}</td>
+            <td>{{ r.type_name }}</td>
+            <td>{{ r.location }}</td>
+            <td>{{ r.status }}</td>
+            <td>{{ r.price }}</td>
+            <td>{{ r.quantity }}</td>
+
+            <td class="table-actions">
+                {# EDITAR — gerente e admin #}
+                {% if session.get('user_role') in ['gerente', 'admin'] %}
+                    <a href="{{ url_for('recurso_editar', recurso_id=r.id) }}"
+                       class="btn btn-secondary btn-xs">
+                        Editar
+                    </a>
+                {% endif %}
+
+                {# ENTRADA — todos #}
+                {% if session.get('user_role') in ['funcionario', 'gerente', 'admin'] %}
+                    <a href="{{ url_for('recurso_entrada', recurso_id=r.id) }}"
+                       class="btn btn-primary btn-xs">
+                        Entrada
+                    </a>
+
+                    {% if r.quantity > 0 %}
+                        <a href="{{ url_for('recurso_baixa_solicitar', recurso_id=r.id) }}"
+                           class="btn btn-warning btn-xs">
+                            Solicitar Baixa
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+                {# REMOVER — apenas admin #}
+                {% if session.get('user_role') == 'admin' %}
+                    <form action="{{ url_for('recurso_remover', recurso_id=r.id) }}"
+                          method="POST"
+                          style="display:inline;">
+                        <button type="submit"
+                                class="btn btn-danger btn-xs"
+                                onclick="return confirm('Remover recurso?')">
+                            Remover
+                        </button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
